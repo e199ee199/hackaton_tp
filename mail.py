@@ -14,3 +14,15 @@ class Classifier:
         self.rules["request"]    = ["доступ", "нужна помощь", "не работает", "запрос", "клиент"]
         self.rules["finance"]    = ["счёт", "счет", "оплат", "акт", "бухгалтер"]
         self.rules["info"]       = ["дайджест", "инструкц", "созвон", "демо", "техническое задание"]
+    def choose_category(self, message):
+        if message.error != '':
+            return 'uncategorized'
+        full_text = (message.subject.lower() + ' ' + message.body.lower())
+        if len(full_text) < 5:
+            return 'uncategorized'
+        for category in self.category_order:
+            words = self.rules.get(category, [])
+            for word in words:
+                if word in full_text:
+                    return category
+        return 'uncategorized'
