@@ -85,4 +85,9 @@ class Reader:
             else:
                 body_start =i
                 break
-            
+        body_lines = []
+        for j in range(body_start,len(lines)):
+            body_lines.append(lines[j])
+        body_text = '\n'.join(body_lines)
+        msg.body = body_text.strip()
+        return msg
