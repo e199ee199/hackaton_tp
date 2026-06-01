@@ -1,24 +1,40 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR"
-
 if [ ! -d "inbox" ]; then
-    echo "Ошибка: папка inbox/ не найдена!"
+    echo 'Ошибка папка inbox не найдена'
     exit 1
 fi
 
-if ! command -v python3 &> /dev/null; then
-    echo "Ошибка: python3 не установлен!"
-    exit 1
-fi
+echo 'Проверка директории inbox'
+count=0
+for file in inbox/*; do
+  if [ -f "$file" ]; then
+      let count++
+  fi
+done
+echo "Найдено файлов для обработки: $count"
 
-python3 main.py
-EXIT_CODE=$?
-
-if [ $EXIT_CODE -eq 0 ]; then
-    echo "Статус: Обработка успешно завершена!"
+echo "Запуск обработки"
+if python3 main.py; then
+    echo 'Готово обработка завершена'
 else
-    echo "Ошибка при выполнении программы! Код: $EXIT_CODE"
-    exit $EXIT_CODE
+    echo 'Ошибка при обработке писем'
+    exit 1
+fi
+
+echo 'Готов результат по папкам'
+if [ -d 'processed' ]; then
+    for dir in processed/*; do
+      if [ -d "$dir" ]; then
+        n=0
+        for f in "$dir"/*; do
+            if [ -f "$f" ]; then
+                let n++
+            fi
+        done
+        echo "  $dir: $n штук"
+      fi
+    done
+else
+    echo 'Папка processed не создана и нечего проверять.'
 fi
