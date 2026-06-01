@@ -30,3 +30,27 @@ class Reader:
             ext=parts[-1]
             ext=ext.lower()
         return ext
+    def read_message(self, file_path):
+        msg = Message(file_path)
+        ext = self.get_format(msg.filename)
+        msg.extension = ext
+        flag = False
+        for fmt in self.binary_formats:
+            if ext == fmt:
+                flag = True
+                break
+
+        if flag:
+            msg.error = 'Бинарный файл'
+            log.warning(f'Файл {msg.filename} с бинарным форматом')
+            return msg
+
+        text = ''
+        try:
+            f = open(file_path, 'r', encoding='utf-8')
+            text = f.read()
+            f.close()
+        except Exception as error:
+            msg.error = 'Ошибка чтения'
+            log.error(f'Файл {msg.filename} с ошибкой чтения {error}')
+            return msg
