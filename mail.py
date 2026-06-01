@@ -41,3 +41,29 @@ class Processor: #класс для связывания всего
             self.stats[category] += 1
             self.move_file(msg, category)
         return self.results
+    def statistics(self):#статистика 
+        total = 0
+        for key in self.stats: #общее количество
+            total +=self.stats[key]
+        stats_list = []
+        for key in self.stats:
+            stats_list.append([key, self.stats[key]])
+
+        for i in range(len(stats_list)):#сортировка
+            for j in range(i+1, len(stats_list)):
+                if stats_list[j][1] > stats_list[i][1]:
+                    tmp = stats_list[i]
+                    stats_list[i] = stats_list[j]
+                    stats_list[j] = tmp
+
+        for item in stats_list:
+            name = item[0]
+            count = item[1]
+            if total>0:
+                percent = round((count*100) / total, 1)#доля категории в процентах 
+            else:
+                percent = 0
+            print(f'{name}: {count} писем {percent}%')
+        print(f'Итого {total} писем ')
+        log.info(f'Статистика {self.stats}')
+        return self.stats
