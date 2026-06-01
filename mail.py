@@ -22,3 +22,22 @@ class Processor: #класс для связывания всего
             shutil.copy2(message.file_path, new_path)
         except Exception as error:
             log.error(f'Ошибка копирования {message.filename}: {error}')
+
+    def process(self):
+        self.create_folders()
+        message_list = self.reader.read_folders(self.inbox_dir)
+        cnt = len(message_list)
+        msg = f'Обработано писем: {cnt}'
+        print(msg)
+        log.info(msg)
+
+        for msg in message_list: #классификация каждого письма
+            category = self.classifier.choose_category(msg)
+            msg.category = category
+            self.results[msg.filename] = category
+
+            if category not in self.stats:#статистика 
+                self.stats[category] = 0
+            self.stats[category] += 1
+            self.move_file(msg, category)
+        return self.results
