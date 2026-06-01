@@ -54,3 +54,35 @@ class Reader:
             msg.error = 'Ошибка чтения'
             log.error(f'Файл {msg.filename} с ошибкой чтения {error}')
             return msg
+        tmp_text = text.strip()
+        if len(tmp_text) == 0:
+            msg.error = 'Пустой файл'
+            log.warning (f'Файл {msg.filename} пустой')
+            return msg
+
+        if ext == 'json':
+            msg = self.parse_json(msg, text)
+            return msg
+
+        lines = text.split('\n')
+        body_start = 0
+        for i in range(len(lines)):
+            line=lines[i].strip()
+            if line == '':
+                body_start = i+1
+                break
+            s_lower = line.lower()
+            if s_lower.startswith("subject:") or s_lower.startswith("тема:"):
+                parts = line.split(":", 1)
+                if len(parts) >1:
+                    msg.subject = parts[1].strip()
+            elif s_lower.startswith("from:") or s_lower.startswith("от кого:"):
+                parts = line.split(":", 1)
+                if len(parts)> 1:
+                    msg.sender = parts[1].strip()
+            elif s_lower.startswith("to:") or s_lower.startswith("кому:") or s_lower.startswith("date:") or s_lower.startswith("дата:"):
+                pass
+            else:
+                body_start =i
+                break
+            
