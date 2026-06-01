@@ -1,4 +1,14 @@
 # Mail module
+    def parse_json(self, msg, text):
+        try:
+            data = json.loads(text)
+            msg.subject = data.get("subject", "")
+            msg.sender = data.get("from", "")
+            msg.body = data.get("body", str(data))
+        except json.JSONDecodeError:
+            msg.body = text
+            log.warning(f"Файл {msg.filename} c некорректным json")
+        return msg
 
 class Classifier:
     def __init__(self):
