@@ -9,6 +9,19 @@
             msg.body = text
             log.warning(f"Файл {msg.filename} c некорректным json")
         return msg
+    def read_folders(self, folder):
+        if not os.path.isdir(folder):
+            log.error("Папка {} не найдена!".format(folder))
+            return []
+        messages = []
+        for name in sorted(os.listdir(folder)):
+            if name[0] == ".":
+                continue
+            path = os.path.join(folder, name)
+            if not os.path.isfile(path):
+                continue
+            messages.append(self.read_message(path))
+        return messages
 
 class Classifier:
     def __init__(self):
