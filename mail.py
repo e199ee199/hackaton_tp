@@ -4,6 +4,9 @@ import os
 import logging
 import json
 import shutil
+
+log = logging.getLogger()
+
 class Message:
     def __init__(self, file_path):
         self.file_path = file_path

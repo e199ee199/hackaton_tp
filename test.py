@@ -1,6 +1,6 @@
 import os
 import pytest
-from mail_system import Message, Reader, Classifier, Processor
+from mail import Message, Reader, Classifier, Processor
 
 @pytest.fixture
 def tmp_inbox(tmp_path):
